@@ -21,6 +21,7 @@ namespace msa {
 	// http://www.openframeworks.cc/forum/viewtopic.php?f=25&t=3767&p=19865
 	inline void drawInterpolatorRaw(Interpolator3D spline, int dotSize = 20, int lineWidth = 4){
 		int numItems = spline.size();
+        if(numItems == 0) return;
 		
 		if(lineWidth) {
 			glLineWidth(lineWidth);
@@ -53,6 +54,8 @@ namespace msa {
     //--------------------------------------------------------------
 	inline void drawInterpolatorSmooth(Interpolator3D spline, int numSteps, int dotSize = 8, int lineWidth = 2) {
 		float spacing = 1.0/numSteps;
+        if(spline.size() == 0) return;
+        
 		if(lineWidth) {
 			glLineWidth(lineWidth);
 			

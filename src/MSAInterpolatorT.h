@@ -17,35 +17,34 @@ namespace msa {
 		
 		// interpolate and re-sample at t position along the spline
 		// where t: 0....1 based on length of spline
-		T sampleAt(float t);		
+		T sampleAt(float t) const;
 		
 		void setInterpolation(InterpolationType i = kInterpolationCubic);
-		int getInterpolation();
+		int getInterpolation() const;
 		
 		void setUseLength(bool b);
-		bool getUseLength();
+		bool getUseLength() const;
 		
 		// return length upto data point i
 		// leave blank (-1) to return length of entire data set
 		// only valid if setUseLength is true
 		// uses current interpolation settings for lenth calculation
 		// returns cached value, no calculations done in this function
-		const float getLength(int i=-1);
-		
-		
+		const float getLength(int i=-1) const;
 		
 		// set number of subdivisions used to calculation length of segment
 		void setLengthSubdivisions(int i = 100);
-		int getLengthSubdivisions();
+		int getLengthSubdivisions() const;
 
 		
 		/******************* stl::container wrapper functions *******************/
 		void push_back(const T& newData);		
-		int size();
+		int size() const;
 		void reserve(int i);
 		void clear();
-		const T& at(int i);
-		vector<T> getData();
+		const T& at(int i) const;
+		vector<T>& getData();
+		const vector<T>& getData() const;
 		
 	protected:
 		InterpolationType _interpolationMethod;
@@ -62,13 +61,13 @@ namespace msa {
 		void updateAllLengths();
 		
 		// given t(0...1) find the node index directly to the left of the point
-		void findPosition(float t, int &leftIndex, float &mu);		
+		void findPosition(float t, int &leftIndex, float &mu) const;
 		
-		T linearInterpolate(const T& y1, const T& y2, float mu);
+		T linearInterpolate(const T& y1, const T& y2, float mu) const;
 		
 		// this function is from Paul Bourke's site
 		// http://local.wasp.uwa.edu.au/~pbourke/miscellaneous/interpolation/
-		T cubicInterpolate(const T& y0, const T& y1, const T& y2, const T& y3, float mu);
+		T cubicInterpolate(const T& y0, const T& y1, const T& y2, const T& y3, float mu) const;
 		
 	};
 	
@@ -90,7 +89,7 @@ namespace msa {
 	// use catmull rom interpolation to re-sample At normT position along the spline
 	// where normT: 0....1 based on length of spline
 	template <typename T>
-	T InterpolatorT<T>::sampleAt(float t) {
+	T InterpolatorT<T>::sampleAt(float t) const {
 		int numItems = size();
 		if(numItems == 0) {
 			//				if(verbose) printf("InterpolatorT: not enough samples", t);
@@ -137,7 +136,7 @@ namespace msa {
 	
     //--------------------------------------------------------------
 	template <typename T>
-	int InterpolatorT<T>::getInterpolation() {
+	int InterpolatorT<T>::getInterpolation() const {
 		return _interpolationMethod;
 	}
 	
@@ -151,13 +150,13 @@ namespace msa {
 	
     //--------------------------------------------------------------
 	template <typename T>
-	bool InterpolatorT<T>::getUseLength() {
+	bool InterpolatorT<T>::getUseLength() const {
 		return _useLength;
 	}
 	
     //--------------------------------------------------------------
 	template <typename T>
-	const float InterpolatorT<T>::getLength(int i) {
+	const float InterpolatorT<T>::getLength(int i) const {
 		if(_useLength) {
 			return i < 0 ? _dist[_dist.size()-1] : _dist.at(i);
 		} else {
@@ -174,7 +173,7 @@ namespace msa {
 
     //--------------------------------------------------------------
 	template <typename T>
-	int InterpolatorT<T>::getLengthSubdivisions() {
+	int InterpolatorT<T>::getLengthSubdivisions() const {
 		return _lengthSubdivisions;
 	}
 
@@ -207,7 +206,7 @@ namespace msa {
 	
     //--------------------------------------------------------------
 	template <typename T>
-	int InterpolatorT<T>::size() {
+	int InterpolatorT<T>::size() const {
 		return _data.size();
 	}
 	
@@ -227,16 +226,21 @@ namespace msa {
 	
     //--------------------------------------------------------------
 	template <typename T>
-	const T& InterpolatorT<T>::at(int i) {
+	const T& InterpolatorT<T>::at(int i) const {
 		return _data.at(clamp(i, 0, size()-1));
 	}
 	
     //--------------------------------------------------------------
 	template <typename T>
-	vector<T> InterpolatorT<T>::getData() {
+	vector<T>& InterpolatorT<T>::getData() {
 		return _data;
 	}
 	
+    //--------------------------------------------------------------
+	template <typename T>
+	const vector<T>& InterpolatorT<T>::getData() const {
+		return _data;
+	}
 	
     //--------------------------------------------------------------
 	template <typename T>
@@ -288,7 +292,7 @@ namespace msa {
 	
 	//--------------------------------------------------------------
     template <typename T>
-	void InterpolatorT<T>::findPosition(float t, int &leftIndex, float &mu) {
+	void InterpolatorT<T>::findPosition(float t, int &leftIndex, float &mu) const {
 		int numItems = size();
 		
 		switch(numItems) {
@@ -347,7 +351,7 @@ namespace msa {
 	
     //--------------------------------------------------------------
 	template <typename T>
-	T InterpolatorT<T>::linearInterpolate(const T& y1, const T& y2, float mu) {
+	T InterpolatorT<T>::linearInterpolate(const T& y1, const T& y2, float mu) const {
 		return (y2-y1) * mu + y1;
 	}
 	
@@ -356,7 +360,7 @@ namespace msa {
 	// this function is from Paul Bourke's site
 	// http://local.wasp.uwa.edu.au/~pbourke/miscellaneous/interpolation/
 	template <typename T>
-	T InterpolatorT<T>::cubicInterpolate(const T& y0, const T& y1, const T& y2, const T& y3, float mu) {
+	T InterpolatorT<T>::cubicInterpolate(const T& y0, const T& y1, const T& y2, const T& y3, float mu) const {
 		float mu2 = mu * mu;
 		T a0 = y3 - y2 - y0 + y1;
 		T a1 = y0 - y1 - a0;
