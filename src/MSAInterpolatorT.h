@@ -7,6 +7,11 @@
 
 namespace msa {
 	
+    template< typename T > inline float lengthOf(const T &v) {
+        return 1;
+    }
+    
+    
 	template <typename T>
 	class InterpolatorT {
 	public:
@@ -263,7 +268,7 @@ namespace msa {
 		float segmentLength = 0;
 		for(float f = startPerc; f <= endPerc; f+= incPerc) {
 			cur = sampleAt(f);
-//			segmentLength += lengthOf(cur - prev);  // TODO: this isn't compiling anymore!
+			segmentLength += lengthOf(cur - prev);  // TODO: this isn't compiling anymore!
 			prev = cur;
 		}
 		
